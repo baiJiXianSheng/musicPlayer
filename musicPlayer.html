@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+        *{padding: 0; margin: 0;}
+        #bgImg{width: 100%; height: 100%;}
+        #player{width:450px; height:290px; position: fixed; left: 50%; top:50%; margin-left: -225px; margin-top: -145px; color: #fff; font-size: 26px; font-family: '黑体';}
+        #song{height: 100px; background: #070707; border-top-right-radius: 8px; border-top-left-radius: 8px;}
+        #song img{display: block; margin-bottom: 14px;}
+        #song .left{margin-top: 30px; margin-left: 38px; float: left;}
+        #song marquee{width:240px; float:left; margin:0 auto; margin-left: 50px; line-height: 100px;}
+        #song .right{margin-left: 50px; margin-top: 30px; float: left;}
+
+        #control{height:190px; background: #692A3B; border-bottom-right-radius: 8px; border-bottom-left-radius: 8px;}
+        #control #time{height: 64px; text-align: center; line-height: 64px;}
+        #hit{text-align: center; height: 70px; line-height: 70px;}
+        #hit #prev, #sp{margin-right: 68px;}
+        #volume{text-align: center; width: 296px; margin-left: 84px;}
+
+        #range{width: 234px;}
+        #volsub{margin-top: -4px;}
+    </style>
+</head>
+<body>
+    <img id = 'bgImg' src = 'images/82fLDu4.jpg'>
+    <div id = 'player'>
+
+        <div id = 'song'>
+            <div class="left">
+                <img id = 'dz' src="images/AQAxRxS.png">
+                <img id = 'sc' src="images/E09T8tf.png">
+            </div>
+            <marquee>来日方长</marquee>
+            <div class="right">          
+                <img id = 'xh' src="images/338F8MX.png">
+                <img id = 'fx' src="images/PGIC6ME.png">
+            </div>   
+        </div>
+
+        <div id = 'control'>
+            <div id = 'time'></div>
+            <div id = 'hit'>
+                <img id = 'prev' src="images/LIqj0nr.png">
+                <img id = 'sp' src="images/lIhwduj.png">
+                <img id = 'next' src="images/RIqj0nr.png">
+            </div>
+            
+            <div id = 'volume'>
+                <img id = 'volSub' src="images/3iirf2f.png">
+                <input id = 'range' type = 'range'>
+                <img id = 'volAdd' src="images/qqdoddi.png">
+            </div>            
+        </div>
+    </div>
+
+    <audio src = 'music/薛之谦,黄龄 - 来日方长.mp3' autoplay = 'false'>
+        您的播放器不支持音频播放
+    </audio>
+
+    <script type="text/javascript">
+    var sp = document.querySelector('#sp'),
+        audio = document.querySelector('audio'),
+        songTime = document.querySelector('#time'),
+        i = 0,
+        marquee = document.querySelector('marquee');
+        arr = [{name:'来日方长', src:'music/薛之谦,黄龄 - 来日方长.mp3'},{name:'刚刚好', src:'music/薛之谦 - 刚刚好.mp3'}, {name:'你还要我怎样', src:'music/薛之谦 - 你还要我怎样.mp3'}, {name:'我好像在哪儿见过你', src:'music/薛之谦 - 我好像在哪见过你.mp3'}, {name:'方圆几里', src:'music/薛之谦 - 方圆几里.mp3'}, {name:'暗涌', src:'music/王菲 - 暗涌.mp3'}];
+    // console.log(audio.duration);
+
+    //点击 播放、暂停
+    sp.addEventListener('click', function(){
+        i++;
+        if(i % 2 == 1){
+            this.src = 'images/xlBv5aR.png';
+            audio.pause();
+        }else{
+            this.src = 'images/lIhwduj.png';
+            audio.play();
+        }                   
+    });    
+
+    //显示当前播放时长
+    var timer = setInterval(function(){
+        // clearInterval(timer);
+        var str = '';
+        var time = audio.currentTime;
+
+        if(time >= audio.duration){
+            time = audio.duration;
+            sp.src = 'images/xlBv5aR.png';
+
+        }
+
+        if(time >= 60){
+            str += '0' + parseInt(time / 60) + ' : ';
+            if(time % 60 > 10){
+                str += parseInt(time % 60);     
+            }else{
+                str += '0' + parseInt(time % 60);
+            }
+        }else{
+            if(time > 10){
+                str += '00 : ' + parseInt(time);     
+            }else{
+                str += '00 : ' + '0' + parseInt(time);
+            }
+        }
+
+        songTime.innerHTML = str;
+    },1000)
+
+    
+    //点击切换下一首歌
+    var next = document.querySelector('#next'),
+        j = 0;   
+    next.addEventListener('click', function(){
+        
+        if(j >= arr.length){
+            j = 0;
+        } 
+        audio.src = arr[j].src;
+        marquee.innerHTML = arr[j].name;
+        j ++;
+    });
+
+    //点击切换上一首歌
+    var prev = document.querySelector('#prev');
+    prev.addEventListener('click', function(){
+        
+        if(j < 0){
+            j = arr.length - 1;
+        } 
+        audio.src = arr[j].src;
+        marquee.innerHTML = arr[j].name;
+        j --;
+    });
+
+
+    //音量控制条
+    var range = document.querySelector('#range'),
+        currentRange;
+    range.addEventListener('mousemove', function(){
+        currentRange = range.value;
+        audio.volume = ( currentRange / 100 );  
+        // console.log('进度条:' + currentRange + ',音量:' + audio.volume);
+    });
+
+    var currentVol;
+    //音量减
+    var volSub = document.querySelector('#volSub');
+    volSub.addEventListener('click', function(){
+        currentVol = audio.volume;
+        if(currentVol <= 0){
+            audio.volume = 0;
+            range.value = 0;
+        }else{
+            audio.volume = audio.volume.toFixed(1) - 0.1;
+            range.value -= 10;
+        }
+    });
+
+    //音量加
+    var volAdd = document.querySelector('#volAdd');
+    volAdd.addEventListener('click', function(){
+        // var currentVol = audio.volume;
+        if(currentVol >= 1){
+            audio.volume = 1;
+            range.value = 100;
+        }else{
+            // audio.volume = audio.volume.toFixed(1) + 0.1;
+            audio.volume += 0.1;
+            range.value += 10; 
+        }
+    });
+     
+    </script>
+</body>
+</html>
